@@ -18,9 +18,8 @@ async function handleUserLogin(req, res) {
         password,
     });
     if(!user) return res.status(404).json({status : 'user not found'})
-    const sessionId = uuidv4();
-    setUser(sessionId, user);
-    res.cookie("uid", sessionId);
+    const token = setUser(user);
+    res.cookie("token", token);
     return res.json({ status: "Logged in Successfully" });
 }
 

@@ -2,6 +2,7 @@ const express = require("express")
 const urlRoute = require('./routes/url')
 const { connectMONGO } = require('./connections')
 const URL = require('./models/url')
+const {checkForAuthentication, restrictTo} = require("./middlewares/auth")
 const { timeStamp } = require("console")
 const userRoute = require("./routes/user")
 
@@ -13,8 +14,9 @@ app.get("/test", async(req, res)=>{
     const allUrls = await URL.find({});
     res.end(JSON.stringify(allUrls))
 })
-app.use('/url', urlRoute)
+app.use('/url', restrictTo(["NORMAL"]),urlRoute)
 app.use('/user', userRoute)
+app.use(checkForAuthentication());
 app.get('/:shortID', async (req, res) => {
     const shortID = req.params.shortID;
     const entry = await URL.findOneAndUpdate({
